@@ -33,7 +33,7 @@ alert(a);
                         </div>
                         <div class="row tallish">
                             {% if file %}
-                            <a href="/static/output/{{ file.out_url }}" class="btn btn-light col-md-4 offset-md-8 dotted" type="submit">Download {{ file.fname }}</a>
+                            <a href="/static/output/{{ file.fname }}" download="output" class="btn btn-light col-md-4 offset-md-8 dotted" type="submit">Download {{ file.fname }}</a>
                             {% else %}
                             <a class="btn btn-hidden col-md-4 offset-md-8" type="submit">Download Result  &nbsp;
                                 {% if processing %}
