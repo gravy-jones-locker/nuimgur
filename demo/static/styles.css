@@ -1,0 +1,41 @@
+.main-content {
+    padding-top: 50px;
+}
+
+.tall {
+    padding-top: 30px;
+    padding-bottom: 15px;
+    padding-left: 25px;
+}
+
+.tallish {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.btn-hidden, .btn-hidden:hover{
+    background-color: lightgrey;
+    color: grey;
+}
+
+.dotted {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.preview-panel {
+    border-top: solid darkgray 1px;
+    padding-top: 20px;
+    margin-top: 40px;
+}
+
+.display-pane {
+    padding: 20px 20px 20px 20px;
+    width: 50%;
+    float:right;
+}
+
+.display-img {
+    max-width: 100%;
+}

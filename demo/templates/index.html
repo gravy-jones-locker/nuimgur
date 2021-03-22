@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <link href="{% static 'styles.css' %}" rel="stylesheet">
+</head>
+
+{% for message in messages %}
+{% if message.level != 20 %}
+<script type="text/javascript">
+var a = "{{message}}";
+alert(a);
+</script>
+{% endif %}
+{% endfor %}
+
+<body>
+    <div class="container-sm main-content">
+        <div class="jumbotron">
+            <div class="input-panel">
+                <h4 class="display-6">Image Processing - Demo Input</h4>
+                <form method="POST" action="/upload_image" enctype="multipart/form-data">{% csrf_token %}
+                    {{ form }}
+                    <div class="row">
+                        <div class="row tall">
+                            <input class="form-control col-md-12" value="{{ file.fname }}" type="file" name="in_file">
+                        </div>
+                        <div class="row tallish">    
+                            <button class="btn btn-success col-md-4 offset-md-8" type="submit">Upload and Process</button>
+                        </div>
+                        <div class="row tallish">
+                            {% if file %}
+                            <a href="/static/output/{{ file.out_url }}" class="btn btn-light col-md-4 offset-md-8 dotted" type="submit">Download {{ file.fname }}</a>
+                            {% else %}
+                            <a class="btn btn-hidden col-md-4 offset-md-8" type="submit">Download Result  &nbsp;
+                                {% if processing %}
+                                <div class="spinner-border text-secondary spinner-border-sm" role="status"></div>
+                                {% endif %}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% if file %}
+            <div class="preview-panel">
+                <h4 class="display-6">Output Comparison</h4>
+                <div class="display-pane">
+                    <img class="display-img" src="/static/input/{{ file.fname }}">
+                </div>
+                <div class="display-pane">
+                    <img class="display-img" src="static/output/{{ file.fname }}">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
