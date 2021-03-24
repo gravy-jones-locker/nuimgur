@@ -24,38 +24,43 @@ alert(a);
                 <h4 class="display-6">Image Processing - Demo Input</h4>
                 <form method="POST" action="/upload_image" enctype="multipart/form-data">{% csrf_token %}
                     {{ form }}
+                    <div class="row tall">
+                        <input class="form-control col-md-12" type="file" name="in_file">
+                    </div>
                     <div class="row">
-                        <div class="row tall">
-                            <input class="form-control col-md-12" value="{{ file.fname }}" type="file" name="in_file">
+                        <div class="col-md-8 options">
+                            <div class="row border-bottom">
+                                <h5 class="display-7">Processing Options</h5>
+                            </div>
+                            <div class="col-md-4 offset-md-8">
+                                <div class="row tallish">
+                                    Gain (Analog * Digital)
+                                    <input type="number" class="form-control" name="gain" {% if file %}value={{ file.gain }}{% else %}value="1"{% endif %} step="0.01" min="0" max="1">
+                                </div>   
+                                <div class="row tallish float-end">
+                                    Binned  &nbsp;<input type="checkbox" name="binned" class="form-check-input" {% if file %}value={{ file.binned }} checked{% else %}value="false"{% endif %}>
+                                </div> 
+                            </div>
                         </div>
-                        <div class="row tallish">    
-                            <button class="btn btn-success col-md-4 offset-md-8" type="submit">Upload and Process</button>
-                        </div>
-                        <div class="row tallish">
-                            {% if file %}
-                            <a href="/static/output/{{ file.fname }}" download="output" class="btn btn-light col-md-4 offset-md-8 dotted" type="submit">Download {{ file.fname }}</a>
-                            {% else %}
-                            <a class="btn btn-hidden col-md-4 offset-md-8" type="submit">Download Result  &nbsp;
-                                {% if processing %}
-                                <div class="spinner-border text-secondary spinner-border-sm" role="status"></div>
+                        <div class="col-md-4">
+                            <div class="row tallish" style="margin-top: 10px"> 
+                                <button class="btn btn-success" type="submit">Upload and Process</button>
+                            </div>
+                            <div class="row tallish">
+                                {% if file %}
+                                <a href="/static/output/{{ file.fname }}" download="output" class="btn btn-light dotted" type="submit">Download {{ file.fname }}</a>
+                                {% else %}
+                                <a class="btn btn-hidden" type="submit">Download Result  &nbsp;
+                                    {% if processing %}
+                                    <div class="spinner-border text-secondary spinner-border-sm" role="status"></div>
+                                    {% endif %}
+                                </a>
                                 {% endif %}
-                            </a>
-                            {% endif %}
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
-            {% if file %}
-            <div class="preview-panel">
-                <h4 class="display-6">Output Comparison</h4>
-                <div class="display-pane">
-                    <img class="display-img" src="/static/input/{{ file.fname }}">
-                </div>
-                <div class="display-pane">
-                    <img class="display-img" src="static/output/{{ file.fname }}">
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
 </body>

@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from demo.forms import UploadFile
 from django.contrib import messages
 from demo.models import ImageFile
+import traceback as tb
+from urllib.parse import urlparse
 
 # Create your views here.
 
@@ -14,7 +16,7 @@ def index(request, context={}):
             continue
         
         fname = msg.message
-        context = {'file': ImageFile.objects.get(pk=fname)}
+        context = {'file': ImageFile.objects.get(fname=fname)}
 
     return render(request, 'index.html', context)
 
@@ -23,17 +25,17 @@ def upload_image(request):
     """Upload image file from local machine to static files"""
 
     try:
-        fname = str(request.FILES['in_file']).replace(' ', '_')
-        ImageFile.objects.update_storage(fname)
+        ImageFile.objects.update_storage()
 
-        form = UploadFile({**{'fname': fname}, **request.POST}, request.FILES)
+        form = UploadFile(request.POST, request.FILES)
         form.save()
 
         form.instance.do_processing()    
-        messages.info(request, fname)
+        messages.info(request, form.instance.fname)
     
     # If any errors are raised the user will see a message
     except:
+        print(tb.format_exc())
         messages.error(request, 'There was an error processing the image')
 
     return redirect('/')

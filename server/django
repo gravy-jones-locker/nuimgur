@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name ip.ad.re.ss.he.re;
+    server_name 172.31.19.122;
 
     location / {
         # django running in uWSGI
