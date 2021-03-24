@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from django import forms
 from demo.models import ImageFile
 from demo import config
+import os
 
 class UploadFile(ModelForm):
 

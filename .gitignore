@@ -2,4 +2,5 @@
 /db.sqlite3
 /demo/static/input/
 /demo/static/output/
+/demo/static/zip/
 /nuimgur/settings.py
