@@ -12,6 +12,6 @@ server {
 
     location /static/ {
         autoindex on;
-        alias    /absolute/path/here/demo/static/;
+        alias    /home/ubuntu/demo/repo/demo/static/;
     }
 }
