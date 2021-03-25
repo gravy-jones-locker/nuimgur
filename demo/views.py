@@ -42,6 +42,7 @@ def upload_image(request):
     
     # If any errors are raised the user will see a message
     except:
+        print(tb.format_exc())
         messages.error(request, 'There was an error processing the image')
         return redirect(f'/')
 
