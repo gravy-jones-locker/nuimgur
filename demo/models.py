@@ -4,6 +4,7 @@ import dirconfig
 import subprocess
 import os
 import time
+import traceback as tb
 import psutil
 
 class CustomManager(models.Manager):
@@ -76,6 +77,7 @@ class ImageFile(models.Model):
         
         except:  # ...or if the process failed to start for some reason
             self.error = True
+            print(tb.format_exc())
 
         self.processed = True         
         self.save()

@@ -4,6 +4,7 @@ import os
 import subprocess
 import dirconfig
 import time
+import traceback as tb
 import zipfile
 from demo import config
 
@@ -61,3 +62,6 @@ if __name__ == '__main__':
             pass
 
         os.remove(f'demo/static/zip/{test_id}.zip')
+
+    finally:
+        print(tb.format_exc())
