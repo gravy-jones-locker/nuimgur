@@ -62,3 +62,7 @@ small {
 .waiting {
     color:lightgrey;
 }
+
+.output-panel {
+    padding-left: 40px;
+}
