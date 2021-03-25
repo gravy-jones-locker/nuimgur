@@ -25,9 +25,12 @@ class CustomManager(models.Manager):
         if not proc:  # True if no process has even been started yet
             return 'waiting'
 
-        ps = [p.pid for p in psutil.process_iter() if p.status != 'zombie']
+        try:  # Raises error if pid not found
+            live_proc = psutil.Process(proc.pid)
+        except:
+            live_proc = None
 
-        if proc.pid in ps:
+        if live_proc and live_proc.status() != 'zombie':
             return 'live'  # True if script currently running
 
         proc.running = False
