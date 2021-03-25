@@ -62,6 +62,7 @@ if __name__ == '__main__':
             pass
 
         os.remove(f'demo/static/zip/{test_id}.zip')
+        print(tb.format_exc())
 
     finally:
-        print(tb.format_exc())
+        quit()
