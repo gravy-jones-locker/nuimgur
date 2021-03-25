@@ -23,11 +23,28 @@ def start_script(test_id):
     proc = subprocess.Popen(cmd)
     ManagedScript.objects.create(pid=proc.pid, running=True, test_id=test_id)
 
+def make_zip(outfile, test_id):
+
+    """Compile all successfully processed files into a zip archive"""
+
+    lookup = {'test_id': test_id, 'processed': True, 'error': False}
+    
+    img_pks = ImageFile.objects.get_pks(**lookup)
+    assert len(img_pks) > 0
+
+    for img_pk in img_pks:
+        path = ImageFile.objects.get(pk=img_pk).out_path
+
+        # Write any successfully processed files into the zip
+        outfile.write(path, arcname=os.path.split(path)[1])
+
 if __name__ == '__main__':
     
     from demo.models import ImageFile
 
     test_id = sys.argv[1]
+
+    time.sleep(5)  # Wait to allow for user pageload
     
     for img_pk in ImageFile.objects.get_pks(test_id=test_id):
         
@@ -36,13 +53,7 @@ if __name__ == '__main__':
     
     try:
         outfile = zipfile.ZipFile(f'demo/static/zip/{test_id}.zip', 'w')
-        lookup = {'test_id': test_id, 'processed': True, 'error': False}
-
-        for img_pk in ImageFile.objects.get_pks(**lookup):
-            path = ImageFile.objects.get(pk=img_pk).out_path
-
-            # Write any successfully processed files into the zip
-            outfile.write(path, arcname=os.path.split(path)[1])
+        make_zip(outfile, test_id)
     except:
         try:
             outfile.close()

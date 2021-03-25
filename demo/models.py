@@ -10,42 +10,36 @@ class CustomManager(models.Manager):
 
     def update_storage(self):
 
-        """Overwrite existing file and set to limit"""
+        """Clean the input/output files and db table to avoid breaching limit"""
 
+        # Delete row/files for as long as count is over the limit set
         while self.count() >= config.FILE_LIMIT:
-            self.first().full_delete()  # The first row is the oldest
+            self.first().full_delete()
 
-    def full_delete(self):
+    def check_status(self, test_id):
 
-        """Remove all existing records/files"""
+        """Check status of script associated with test_id"""
 
-        for row in self.all():
-            row.full_delete()
+        proc = ManagedScript.objects.filter(test_id=test_id).first()
+        if not proc:  # True if no process has even been started yet
+            return 'waiting'
+
+        if proc.pid in [p.pid for p in psutil.process_iter()]:
+            return 'live'  # True if script currently running
+
+        proc.running = False
+        proc.save()
+        
+        if not os.path.isfile(f'demo/static/zip/{test_id}.zip'):
+            return 'error'  # True if not running but no output .zip
+        else:
+            return 'done'
 
     def get_pks(self, **filters):
 
         """Return the primary keys as a list with filters applied"""
 
         return self.filter(**filters).values_list('pk', flat=True)
-
-    def check_status(self, test_id):
-
-        """Check that the script is still running and a zip has been made"""
-
-        proc = ManagedScript.objects.filter(test_id=test_id).first()
-        if not proc:
-            return 'dead'
-
-        if proc.pid in [p.pid for p in psutil.process_iter()]:
-            return 'live'
-
-        proc.running = False
-        proc.save()
-        
-        if not os.path.isfile(f'demo/static/zip/{test_id}.zip'):
-            return 'error'
-        else:
-            return 'done'
 
 class ImageFile(models.Model):
 
@@ -71,27 +65,32 @@ class ImageFile(models.Model):
 
         """Run processing commands on input image"""
 
-        cmd = self.build_cmd()
-        output = subprocess.check_output(cmd)
-
-        self.processed = True
+        try:
+            cmd = self.build_cmd()
             
-        # Error only marked if exact string found in stdout
-        if config.ERROR_STR in str(output):
-            self.error = True            
-    
+            output = subprocess.check_output(cmd)
+                    
+            # Error marked if exact string found in stdout...
+            if config.ERROR_STR in str(output):
+                self.error = True   
+        
+        except:  # ...or if the process failed to start for some reason
+            self.error = True
+
+        self.processed = True         
         self.save()
 
     def full_delete(self):
 
         """Remove row entry and associated files"""
 
-        if os.path.isfile(self.in_path):
+        if os.path.isfile(self.in_path):  # True if input file exists
             os.remove(self.in_file.path)
         
-        if os.path.isfile(self.out_path): 
+        if os.path.isfile(self.out_path):  # True if output file exists
             os.remove(self.out_path)
 
+        # True if .zip associated to test_id (current batch) exists
         if os.path.isfile(f'demo/static/zip/{self.test_id}.zip'):
             os.remove(f'demo/static/zip/{self.test_id}.zip')
 
@@ -102,8 +101,9 @@ class ImageFile(models.Model):
         """Stores image file info which doesn't fit in request"""
 
         self.in_path = self.in_file.path
-        self.fname = f'{test_id}_{os.path.split(self.in_path)[1]}'
+        self.fname = os.path.split(self.in_path)[1]
 
+        # This assumes files stored in /demo/static/[input;output]
         self.out_path = self.in_path.replace('input', 'output')
         
         self.test_id = test_id

@@ -17,8 +17,9 @@ def index(request, context={}):
     test_id = request.GET.get('test_id') 
 
     if test_id:
-        context = {'file': ImageFile.objects.filter(test_id=test_id).last(),
-                   'status': ImageFile.objects.check_status(test_id)}
+        context = {'files': ImageFile.objects.filter(test_id=test_id),
+                   'status': ImageFile.objects.check_status(test_id),
+                   'test_id': test_id}
 
     return render(request, 'index.html', context)
 
@@ -41,7 +42,6 @@ def upload_image(request):
     
     # If any errors are raised the user will see a message
     except:
-        print(tb.format_exc())
         messages.error(request, 'There was an error processing the image')
         return redirect(f'/')
 

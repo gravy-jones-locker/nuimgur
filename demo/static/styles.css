@@ -48,3 +48,17 @@ small {
     padding-left: 40px;
     padding-right: 50px;
 }
+
+.tight-horizontal {
+    padding-top: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.error {
+    color: red;
+}
+
+.waiting {
+    color:lightgrey;
+}
