@@ -5,6 +5,8 @@ sudo apt-get -y install python3-dev python3-venv python3-pip
 sudo apt-get -y install uwsgi uwsgi-plugin-python3
 sudo apt-get -y install nginx
 
+# Change this to wherever you want everything to be
+mkdir /working-directory
 cd /working-directory
 
 python3 -m venv venv
